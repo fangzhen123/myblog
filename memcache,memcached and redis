@@ -1,4 +1,4 @@
-在写这篇文章之前一直对memcache 、memcached模糊，相差一个字母，特此总结下：
+今天来总结一下memcache和memcached的区别
 
 Memcache是什么？
 Memcache是一个自由和开放源代码、高性能、分配的内存对象缓存系统。用于加速动态web应用程序，减轻数据库负载。它可以应对任意多个连接，使用非阻塞的网络IO。由于它的工作机制是在内存中开辟一块空间，然后建立一个Hash表，Memcached自管理这些Hash表。
