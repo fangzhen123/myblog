@@ -29,4 +29,50 @@
 3.闭包的作用
   1).连接函数内部和函数外部，访问函数内部的变量;
   2).让变量的值始终保存在内存中;
+  function f1(){
+     var n = 999;
+     function f2(){
+       alert(n);
+     }
+     add = function(){
+         n+=1;
+     }
+     return f2;
+  }
+  var result = f1();
+  result();//999
+  add();
+  result();//1000
+     注意这里n没有在f1被调用后被销毁。原因是f2是f1的子函数，依赖于f1。而f2被赋值给全局变量result;
+   因此f2一直在内存中，他的依赖f1也一直在内存中。所以f1不会在调用后被回收。
+   
+4.使用闭包的注意事项
+  1）.闭包会让函数的变量都在内存中，会使内存消耗很大。解决办法是：退出函数前，将不用的局部变量全部删除。
+  2）.闭包会在函数外部改变函数内部的值。
   
+  
+ 例题：
+ （1）.
+ var name = "The Window";
+　　var object = {
+　　　　name : "My Object",
+　　　　getNameFunc : function(){
+　　　　　　return function(){
+　　　　　　　　return this.name;
+　　　　　　};
+　　　　}
+　　};
+　　alert(object.getNameFunc()());
+　　
+　(2).
+　var name = "The Window";
+　　var object = {
+　　　　name : "My Object",
+　　　　getNameFunc : function(){
+　　　　　　var that = this;
+　　　　　　return function(){
+　　　　　　　　return that.name;
+　　　　　　};
+　　　　}
+　　};
+　　alert(object.getNameFunc()());
