@@ -1,0 +1,80 @@
+1.找出整数数组中唯一一个落单的数;
+  思路:二进制异或运算,相同两数异或等于0,0异或任何数等于该数本身。
+  js代码：
+  /**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var singleNumber = function(nums) {
+    var i = 0,temp = 0;
+    while(i<nums.length){
+        temp ^= nums[i++];
+    }
+    return temp;
+};
+
+
+2.有N个数1到N-1,其中有一个数重复。O(n)限制，找出该数。（微信面试题）
+  思路：N个数的和减去n-1个数的和。
+  
+3.求出二叉树的高度;
+  思路：递归实现。若为根节点，则return 0; 否则 return 左右子树最大高度+1；
+   c++代码：
+   /**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        if(root==NULL){
+            return 0;
+        }
+        else{
+            int leftDepth = maxDepth(root->left);
+            int rightDepth = maxDepth(root->right);
+            return leftDepth>rightDepth?leftDepth+1:rightDepth+1;
+        }
+    }
+};
+
+4.判断两棵二叉树是否相等
+  思路：先判断根节点是否都为空，或者都不为空且值相等，再递归判断左右子树是否相等。
+  c++代码：
+  
+  /**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+        if(p==NULL&&q==NULL){
+            return true;
+        }
+        if(p==NULL||q==NULL){
+            return false;
+        }
+       
+        if(p->val!=q->val){
+            return false;
+        }
+        else{
+            if(isSameTree(p->left,q->left)&&isSameTree(p->right,q->right)){
+                    return true;
+            }
+            return false;
+        }
+    
+    }
+};
