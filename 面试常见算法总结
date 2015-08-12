@@ -78,3 +78,41 @@ public:
     
     }
 };
+
+5.输出给点二叉树的先序遍历。
+   思路：1.递归实现，
+         2.迭代实现，利用栈来实现，首先根节点入栈，while循环，栈顶元素pop并记录下来，放入数组中。然后该指针的右指针，左指针依次入栈。
+         
+         非递归实现代码：
+         /**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+        vector<int> result;
+        stack<TreeNode*> s;
+        s.push(root);
+        while(!s.empty()){
+            TreeNode* t = s.top();
+            s.pop();
+            if(t!=NULL){
+                result.push_back(t->val);
+                s.push(t->right);
+                s.push(t->left);
+            }
+            
+        }
+        return result;
+    }
+};
+
+
+6.非递归实现输入给定二叉树的中序遍历
+  思路：
