@@ -114,5 +114,62 @@ public:
 };
 
 
-6.非递归实现输入给定二叉树的中序遍历
-  思路：
+6.非递归实现输入给定二叉树的中序遍历,后序遍历
+
+7.判断单链表是否存在环。
+  思路：使用两个指针，一个每次前进一位，一个每次前进2位。若存在环，则快的指针先进入环，两者必定相遇。
+  c++代码：
+  /**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        ListNode* a = head;
+        ListNode* b = head;
+        while(b!=NULL&&b->next!=NULL){
+            a = a->next;
+            b = b->next->next;
+            if(a==b){
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+8.O(1)时间删除单链表指定节点。
+  思路：找到指定节点的下一节点，将下一节点的值赋值给指定节点，再将指定节点的next指向下一节点的next;
+  c++代码：
+  //O(1)时间删除链表节点，从无头单链表中删除节点
+  void deleteRandomNode(Node *cur)
+  {
+      if(cur==NULL||cur->next==NULL){
+          assert(1);
+      }
+      Node* curNext = cur->next;
+      cur->val = curNext->val;
+      cur->next = curNext->next;
+      delete curNext;
+  }
+  
+9.单链表的反转
+  思路：非递归实现,依次反转每个节点指针指向
+  Node* reverseList(Node *head){
+      if(head==NULL||head->next==NULL)
+          return head;
+      Node *pre = null;
+      Node *next= null;
+      while(head!=NULL){
+        next = head->next;
+        head->next = pre;
+        pre = head;
+        head = next;
+      }
+      return pre;
+  }
