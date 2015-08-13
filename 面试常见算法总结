@@ -114,7 +114,40 @@ public:
 };
 
 
-6.非递归实现输入给定二叉树的中序遍历,后序遍历
+6.非递归实现输入给定二叉树的中序遍历
+  思路：先将所有的左节点push进栈，再依次出栈，并将指针指向右节点。
+  c++代码：
+  /**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+     vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> result;
+        stack<TreeNode*> s;
+        TreeNode *p = root;
+        while(p!=NULL||!s.empty()){
+            if(p!=NULL){//先将左节点push进栈
+                s.push(p);
+                p=p->left;
+            }
+            else{
+                p = s.top();
+                s.pop();
+                result.push_back(p->val);
+                p=p->right;
+            }
+        }
+        return result;
+    }
+};
+  
 
 7.判断单链表是否存在环。
   思路：使用两个指针，一个每次前进一位，一个每次前进2位。若存在环，则快的指针先进入环，两者必定相遇。
