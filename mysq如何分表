@@ -1,0 +1,62 @@
+
+1.mysql为什么要分表
+    当一张表的数据达到几百万行的时候，查询一次会花费很多时间，联合查询很可能会死在那。分表是为了减少数据库的负担，缩短查询
+  的时间。
+    myISAM会锁表，Innodb会锁行。当一次执行花费太多时间的话，其他SQL只能等待。为了减少等待时间，我们要去减少执行时间。所以
+  我们要采取分表的策略。
+  
+2.如何分表
+
+  1).mysql集群
+   为数据库减轻负担，就是减少SQL排队队列中的SQL数量。mysql集群，将一个数据库的压力分摊给多个数据库。
+   
+   优点:扩展性好，没有多个分表后的复杂操作。
+   
+   缺点:单个表的数据还是很大，查询时间还是很久。硬件开销大。
+   
+  2).预先估计会出现比较大的数据的表，根据相应的规则(如取模，hash映射)分成若干个表。
+  执行查询的时候，根据分表的规则，找到要查询的表并执行查询。
+  
+  例如将apiLogs表分成100个表的话，PHP代码如下：
+  <?php
+    for($i=0;$i<100;$i++){
+      $sql = "CREATE TABLE apiLogs{$i} LIKE apiLogs;
+              INSERT INTO　apiLogs{$i} SELECT * FROM apiLogs WHERE logId%100 = {$i}";
+      mysql_query($sql);
+    }
+  ?>
+  
+  优点:避免一张表的数据量过大，减少SQL的执行时间。
+  
+  缺点:一旦确定了分表的规则，以后的查询都要按照这个规则，不能更改。扩展性较差。同时，个人觉得联合多表查询将是个问题。
+     例如将apiLogs表根据logId模100分成100个表的话，要想匹配post字段中的信息查询的话，还是需要查询多个表。
+  
+  3).merge存储引擎实现分表
+  myISAM支持merge存储引擎，Innodb不支持。
+  
+  例如将apiLogs现在已经有1000w行了，现根据logId分成100个表，apiLog00-apiLogs99.注意这些表中的logId不能是自增。
+  
+  我们插入新的数据，需要唯一的logId。所以可以建立单独一张表log_id，专门用来存id。
+  
+  CREATE TABLE `log_id`(
+        `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY
+  ) ENGINE=MYISAM;
+  
+  每次新增log的时候，先在log_id插入一条数据，然后获取id,在根据id以及分表的规则，决定数据插入哪个表。
+  
+  更新和删除操作，根据已知的id，决定去哪个表中操作数据。
+  
+  但是如果我们需要查询某一时间段内的数据时，麻烦事就来了。总不能去每个表中查询结果，再将结果合并吧。或者联合100个表查询..
+  
+  显然都是不可取的。
+  
+  merge存储引擎可以帮助解决这类问题。merge引擎可以将N个字表联合在一起，看成是一个整表，实际上还是N个真实的字表。
+  
+  创建merge表：
+  
+  CREATE TABLE total_logs (
+  ***
+  ) TYPE=MERGE UNION(apiLogs00,...aoiLogs99) INSERT_METHOD=NO;
+  
+  查询数据的时候，就可以在total_logs表中操作了。
+  
